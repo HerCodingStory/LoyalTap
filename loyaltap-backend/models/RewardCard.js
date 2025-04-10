@@ -4,26 +4,26 @@ const rewardCardSchema = new mongoose.Schema({
     restaurantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false // TODO: just for testing, set true again later
+        required: true
     },
     customerEmail: {
         type: String,
-        required: true,
+        required: true
     },
     points: {
         type: Number,
-        default: 0,
+        default: 0
     },
     goal: {
         type: Number,
-        default: 10,
+        default: 10
     },
     lastUpdated: {
         type: Date,
-        default: Date.now,
+        default: Date.now
     }
 });
 
-rewardCardSchema.index({ restaurantId: 1, customerEmail: 1 }, { unique: true }); // Ensure 1 card per customer per restaurant
+rewardCardSchema.index({ restaurantId: 1, customerEmail: 1 }, { unique: true });
 
 module.exports = mongoose.model('RewardCard', rewardCardSchema);

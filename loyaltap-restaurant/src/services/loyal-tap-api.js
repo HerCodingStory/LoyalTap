@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const token = localStorage.getItem('token');
+
 const api = axios.create({
     baseURL: 'http://localhost:5001/api', // TODO: replace when backend is deployed
+    // headers: { // TODO: add when ready
+    //     Authorization: `Bearer ${token}`,
+    // }
 });
 
 export const login = (email, password) => api.post('/auth/login', { email, password });

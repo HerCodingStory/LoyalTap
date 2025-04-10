@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['restaurant', 'customer'], // supports future customer access
+    enum: ['restaurant', 'customer'],
     default: 'restaurant'
   },
   createdAt: {
@@ -28,4 +28,3 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('User', userSchema);
-

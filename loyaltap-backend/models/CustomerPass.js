@@ -4,35 +4,31 @@ const customerPassSchema = new mongoose.Schema({
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false //TODO: just for testing, set true again later
+    required: true
   },
   customerEmail: {
     type: String,
-    required: true,
+    required: true
   },
   points: {
     type: Number,
-    required: true,
+    required: true
   },
   goal: {
     type: Number,
-    required: true,
+    required: true
   },
   passUrl: {
     type: String,
-    required: true,
+    required: true
   },
   qrCode: {
-    type: String, // base64 PNG image
-    required: true,
+    type: String, // base64 PNG
+    required: true
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-  },
-  rewardCardId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'RewardCard'
+    default: Date.now
   }
 });
 
