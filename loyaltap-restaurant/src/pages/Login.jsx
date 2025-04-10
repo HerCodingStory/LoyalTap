@@ -25,6 +25,13 @@ export default function Login() {
                 <input className="w-full p-2 mb-3 border" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
                 <input type="password" className="w-full p-2 mb-3 border" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                 <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Login</button>
+                <button
+                    type="button"
+                    onClick={() => navigate('/register')}
+                    className="w-full mt-4 bg-gray-300 text-black p-2 rounded"
+                >
+                    Register Instead
+                </button>
             </form>
         </div>
     );
