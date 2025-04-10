@@ -1,32 +1,30 @@
-const RewardCard = require('../models/RewardCard');
+const { createGooglePass, generateQRCode } = require('../utils/googleWalletUtils');
+const CustomerPass = require('../models/CustomerPass');
 
-exports.createOrUpdateCard = async (req, res) => {
-  const { restaurantId, customerEmail } = req.body;
+exports.createPassWithQR = async (req, res) => {
+  const { customerEmail, points, goal } = req.body;
 
   try {
-    let card = await RewardCard.findOne({ restaurantId, customerEmail });
+    const passUrl = createGooglePass(customerEmail, points, goal);
+    const qrCode = await generateQRCode(passUrl);
 
-    if (!card) {
-      card = await RewardCard.create({ restaurantId, customerEmail });
-    } else {
-      card.points += 1;
-      card.lastUpdated = Date.now();
-      await card.save();
-    }
+    const pass = await CustomerPass.create({
+      restaurantId: req.user?.id || '67f751ac0ed18f5d6a787bc8', // TODO: replace id when we add JWT
+      customerEmail,
+      points,
+      goal,
+      passUrl,
+      qrCode
+    });
 
-    res.json(card);
+    res.json({ passUrl, qrCode });
   } catch (err) {
-    res.status(500).json({ message: 'Error handling reward card' });
+    console.error(err);
+    res.status(500).json({ message: 'Failed to generate pass' });
   }
 };
 
-exports.getCardsByRestaurant = async (req, res) => {
-  const { restaurantId } = req.params;
-
-  try {
-    const cards = await RewardCard.find({ restaurantId });
-    res.json(cards);
-  } catch (err) {
-    res.status(500).json({ message: 'Error retrieving cards' });
-  }
+exports.getAllPasses = async (req, res) => { // TODO: replace id when we add JWT
+  const passes = await CustomerPass.find({ restaurantId: req.user?.id || '67f751ac0ed18f5d6a787bc8' }).sort({ createdAt: -1 });
+  res.json(passes);
 };
