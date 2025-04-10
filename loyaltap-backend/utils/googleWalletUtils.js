@@ -3,6 +3,7 @@ const path = require('path');
 const credentials = require('../GoogleWallet/credentials/goole-service-account.json');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const QRCode = require('qrcode');
 
 const issuerId = '3388000000022905745';
 
@@ -97,5 +98,15 @@ const createGooglePass = (customerEmail, points, goal) => {
     const saveUrl = `https://pay.google.com/gp/v/save/${token}`;
     return saveUrl;
   };
-  
-  module.exports = { createLoyaltyClass, createGooglePass };
+
+const generateQRCode = async (url) => {
+    try {
+      const qrDataUrl = await QRCode.toDataURL(url);
+      return qrDataUrl; // base64 string that can be used in HTML or frontend
+    } catch (err) {
+      console.error('QR generation failed:', err);
+      throw err;
+    }
+};
+
+module.exports = { createLoyaltyClass, createGooglePass, generateQRCode };
