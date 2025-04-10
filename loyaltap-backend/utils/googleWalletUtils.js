@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 const path = require('path');
-const credentials = require('../GoogleWallet/credentials/goole-service-account.json');
+const credentials = require('../GoogleWallet/credentials/google-service-account.json');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const QRCode = require('qrcode');
