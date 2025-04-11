@@ -137,3 +137,5 @@ dist
 
 AppleWallet/
 google-service-account.json
+loyaltap-restaurant/src/firebase.js
+loyaltap-backend/serviceAccountKey.json
