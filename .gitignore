@@ -136,6 +136,8 @@ dist
 .pnp.*
 
 AppleWallet/
-google-service-account.json
-loyaltap-restaurant/src/firebase.js
+GoogleWallet/
+loyaltap-restaurant\google-service-account.json
+loyaltap-backend\serviceAccountKey.json
+loyaltap-restaurant\src\firebase.js
 loyaltap-backend/serviceAccountKey.json
