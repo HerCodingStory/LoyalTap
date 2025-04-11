@@ -9,8 +9,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-app.use('/api/auth', authRoutes);
+app.use("/", authRoutes);
 app.use('/api/pass', passRoutes);
 app.use('/api/customers', customerRoutes);
 
