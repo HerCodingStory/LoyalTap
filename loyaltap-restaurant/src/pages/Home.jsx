@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { createPassWithQR } from '../services/loyal-tap-api';
+import loyalTapApi, { createPassWithQR } from '../services/loyal-tap-api';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Home() {
+    const [restaurantName, setRestaurantName] = useState('');
     const [email, setEmail] = useState('');
     const [points, setPoints] = useState(0);
     const [goal, setGoal] = useState(10);
@@ -29,6 +30,15 @@ export default function Home() {
     };
 
     useEffect(() => {
+        const fetchRestaurant = async () => {
+            try {
+                const res = await loyalTapApi.get('/auth/me');
+                setRestaurantName(res.data.name);
+            } catch (err) {
+                console.error('Failed to load restaurant name');
+            }
+        };
+        fetchRestaurant();
         fetchPasses();
     }, []);
 
@@ -71,7 +81,9 @@ export default function Home() {
 
     return (
         <div className="p-8 max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Create Loyalty Pass</h1>
+            <h1 className="text-4xl font-extrabold text-emerald-600 drop-shadow-sm">
+                {restaurantName ? `${restaurantName}'s Dashboard 🌴` : 'LoyalTap Dashboard 🌴'}
+            </h1>
             <button
                 onClick={handleLogout}
                 className="bg-red-500 text-white px-4 py-2 rounded"

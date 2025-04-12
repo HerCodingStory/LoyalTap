@@ -5,9 +5,9 @@ const { getAllRewardCards, getCustomerCard, updateCustomerPoints, getCustomerPas
 
 const router = express.Router();
 
-router.get('/cards', verifyToken, getAllRewardCards);
-router.get('/cards/:email', verifyToken, getCustomerCard);
-router.post('/cards/update', verifyToken, updateCustomerPoints);
-router.get('/passes/:email', verifyToken, getCustomerPasses);
+router.get('/reward-cards', verifyToken, getAllRewardCards);
+router.get('/reward-cards/:email', verifyToken, getCustomerCard);
+router.post('/reward-cards/update', verifyToken, updateCustomerPoints);
+router.get('/customer-passes/:email', verifyToken, getCustomerPasses);
 
 module.exports = router;

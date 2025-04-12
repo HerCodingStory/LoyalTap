@@ -1,18 +1,19 @@
 const express = require('express');
 const { createGooglePass, createLoyaltyClass } = require('../utils/googleWalletUtils');
 const { createPassWithQR, getAllPasses, regenerateCustomerPass, deleteCustomerCard, deleteCustomerPasses } = require('../controllers/passController');
-const { verifyToken } = require('../config/authMiddleware');
+const verifyFirebaseToken = require('../middleware/firebaseAuth');
 const router = express.Router();
 
-router.post('/google/generate-pass-with-qr', verifyToken, createPassWithQR);
-router.get('/google/all', verifyToken, getAllPasses);
-router.post('/google/regenerate-pass', verifyToken, regenerateCustomerPass);
-router.delete('/customer/pass', verifyToken, deleteCustomerPasses);
-router.delete('/customer/reward', verifyToken, deleteCustomerCard);
 
-// Testing Only (One Time)
+router.post('/google/generate-pass-with-qr', verifyFirebaseToken, createPassWithQR);
+router.get('/google/all', verifyFirebaseToken, getAllPasses);
+// router.delete('/customer/pass', verifyFirebaseToken, deleteCustomerPasses);
+// router.post('/google/regenerate-pass', verifyFirebaseToken, regenerateCustomerPass);
+// router.delete('/customer/reward', verifyFirebaseToken, deleteCustomerCard);
+
+// Testing Only (One Time for Each Restaurant)
 router.get('/google/create-class', createLoyaltyClass);
-router.post('/google/generate-pass', verifyToken, async (req, res) => {
+router.post('/google/generate-pass', verifyFirebaseToken, async (req, res) => {
     const { customerEmail, points, goal } = req.body;
 
     if (typeof customerEmail !== 'string') {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase'; // if firebase.js is now in /src
-import axios from 'axios'; // if you're not already using it
+import { auth } from '../firebase';
+import axios from 'axios';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -17,10 +17,11 @@ export default function Login() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             console.log("✅ Firebase login success", user);
-    
-            const idToken = await user.getIdToken();
+
+            const idToken = await userCredential.user.getIdToken();
             console.log("🪪 Got ID Token", idToken);
-    
+            localStorage.setItem('token', idToken);
+
             const res = await axios.post(
                 'http://localhost:5001/auth/sync',
                 {},
