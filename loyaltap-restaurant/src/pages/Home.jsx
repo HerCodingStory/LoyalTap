@@ -30,15 +30,16 @@ export default function Home() {
     };
 
     useEffect(() => {
-        const fetchRestaurant = async () => {
-            try {
-                const res = await loyalTapApi.get('/auth/me');
-                setRestaurantName(res.data.name);
-            } catch (err) {
-                console.error('Failed to load restaurant name');
-            }
-        };
-        fetchRestaurant();
+        // TODO: show name of restaurant in the dashboard
+        // const fetchRestaurant = async () => {
+        //     try {
+        //         const res = await loyalTapApi.get('/auth/me');
+        //         setRestaurantName(res.data.name);
+        //     } catch (err) {
+        //         console.error('Failed to load restaurant name');
+        //     }
+        // };
+        // fetchRestaurant();
         fetchPasses();
     }, []);
 
