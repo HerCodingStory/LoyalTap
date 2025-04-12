@@ -1,0 +1,51 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      ##############################
+      # Backend (loyaltap-backend) #
+      ##############################
+      - name: 📦 Install backend dependencies
+        working-directory: loyaltap-backend
+        run: npm install
+
+      - name: 🧪 Run backend tests (if any)
+        working-directory: loyaltap-backend
+        run: echo "No tests yet"  # Replace with `npm test` if tests exist
+
+      ###############################
+      # Frontend (loyaltap-restaurant)
+      ###############################
+      - name: 📦 Install frontend dependencies
+        working-directory: loyaltap-restaurant
+        run: npm install
+
+      - name: 🛠 Lint React app
+        working-directory: loyaltap-restaurant
+        run: npm run lint || echo "Lint errors ignored" # Or fail on lint
+
+      - name: 🚧 Build React app
+        working-directory: loyaltap-restaurant
+        run: npm run build
