@@ -42,9 +42,9 @@ jobs:
         working-directory: loyaltap-restaurant
         run: npm install
 
-      - name: 🛠 Lint React app
-        working-directory: loyaltap-restaurant
-        run: npm run lint || echo "Lint errors ignored" # Or fail on lint
+      # - name: 🛠 Lint React app
+      #   working-directory: loyaltap-restaurant
+      #   run: npm run lint || echo "Lint errors ignored" # Or fail on lint
 
       - name: 🚧 Build React app
         working-directory: loyaltap-restaurant
