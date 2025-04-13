@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import axios from 'axios';
+// import axios from 'axios';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -12,58 +12,64 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log("👉 Starting login...");
-    
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            console.log("✅ Firebase login success", user);
+            const idToken = await user.getIdToken();
 
-            const idToken = await userCredential.user.getIdToken();
-            console.log("🪪 Got ID Token", idToken);
             localStorage.setItem('token', idToken);
 
-            const res = await axios.post(
-                'http://localhost:5001/auth/sync',
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                }
-            );
-            console.log("✅ Synced with backend", res.data);
-    
-            localStorage.setItem("token", idToken); // optional
+            // const res = await axios.post(
+            //     'http://localhost:5001/auth/sync',
+            //     {},
+            //     {
+            //         headers: {
+            //             Authorization: `Bearer ${idToken}`,
+            //         },
+            //     }
+            // );
+
             navigate("/dashboard");
         } catch (err) {
             console.error("❌ Login failed", err);
             alert("Login failed. Please check your credentials.");
         }
     };
-    
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <form onSubmit={handleSubmit} className="bg-white p-8 shadow-lg rounded w-96">
-                <h2 className="text-xl font-bold mb-4">Login</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+            <form
+                onSubmit={handleSubmit}
+                className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg space-y-6"
+            >
+                <h2 className="text-2xl font-semibold text-center text-gray-800">Sign in to LoyalTap</h2>
+
                 <input
-                    className="w-full p-2 mb-3 border"
+                    type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db] transition"
                 />
+
                 <input
                     type="password"
-                    className="w-full p-2 mb-3 border"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db] transition"
                 />
-                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Login</button>
+
+                <button
+                    type="submit"
+                    className="w-full bg-[#3498db] text-white py-3 rounded-lg hover:bg-[#2980b9] transition font-medium"
+                >
+                    Login
+                </button>
+
                 <button
                     type="button"
                     onClick={() => navigate('/register')}
-                    className="w-full mt-4 bg-gray-300 text-black p-2 rounded"
+                    className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition"
                 >
                     Register Instead
                 </button>
