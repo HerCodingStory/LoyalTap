@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { createPassWithQR } from '../services/loyal-tap-api';
-import axios from 'axios';
 
 export default function Generate() {
     const [email, setEmail] = useState('');

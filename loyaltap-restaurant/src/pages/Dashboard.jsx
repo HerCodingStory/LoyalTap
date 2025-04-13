@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { Outlet } from 'react-router-dom';
-import DashboardContent from '../components/DashboardContent';
 import loyalTapApi from '../services/loyal-tap-api';
 
 export default function Dashboard() {
