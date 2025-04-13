@@ -46,6 +46,9 @@ jobs:
       #   working-directory: loyaltap-restaurant
       #   run: npm run lint || echo "Lint errors ignored" # Or fail on lint
 
+      - name: Skip lint
+        run: echo "Lint step skipped"
+
       - name: 🚧 Build React app
         working-directory: loyaltap-restaurant
         run: npm run build
