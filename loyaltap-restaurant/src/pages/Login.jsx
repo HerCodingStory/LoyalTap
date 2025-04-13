@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import axios from 'axios';
+// import axios from 'axios';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -18,15 +18,15 @@ export default function Login() {
 
             localStorage.setItem('token', idToken);
 
-            const res = await axios.post(
-                'http://localhost:5001/auth/sync',
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                }
-            );
+            // const res = await axios.post(
+            //     'http://localhost:5001/auth/sync',
+            //     {},
+            //     {
+            //         headers: {
+            //             Authorization: `Bearer ${idToken}`,
+            //         },
+            //     }
+            // );
 
             navigate("/dashboard");
         } catch (err) {

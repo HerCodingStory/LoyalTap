@@ -7,8 +7,8 @@ export default function Generate() {
     const [goal, setGoal] = useState(10);
     const [qr, setQr] = useState(null);
 
-    const token = localStorage.getItem('token');
-    const headers = { Authorization: `Bearer ${token}` };
+    // const token = localStorage.getItem('token');
+    // const headers = { Authorization: `Bearer ${token}` };
 
     const handleGenerate = async (e) => {
         e.preventDefault();
