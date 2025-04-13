@@ -12,7 +12,7 @@ import Generate from './pages/Generate';
 import Scan from './pages/Scan';
 import Customers from './pages/Customers';
 import Settings from './pages/Settings';
-import PrivateRoute from './components/PrivateRoute'; // TODO: add so no one can access this without being verify
+// import PrivateRoute from './components/PrivateRoute'; // TODO: add so no one can access this without being verify
 
 export default function App() {
     return (

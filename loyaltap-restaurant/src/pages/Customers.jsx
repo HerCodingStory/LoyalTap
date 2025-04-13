@@ -8,6 +8,9 @@ export default function Customers() {
     const headers = { Authorization: `Bearer ${token}` };
 
     useEffect(() => {
+        const headers = {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        };
         const fetchPasses = async () => {
             try {
                 const res = await axios.get('http://localhost:5001/api/pass/google/all', { headers });
@@ -17,7 +20,7 @@ export default function Customers() {
             }
         };
         fetchPasses();
-    }, []);
+    },[]);
 
     const handleDelete = async (email) => {
         try {
