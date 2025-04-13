@@ -31,9 +31,9 @@ jobs:
         working-directory: loyaltap-backend
         run: npm install
 
-      - name: 🧪 Run backend tests (if any)
-        working-directory: loyaltap-backend
-        run: echo "No tests yet"  # Replace with `npm test` if tests exist
+      # - name: 🧪 Run backend tests (if any)
+      #   working-directory: loyaltap-backend
+      #   run: echo "No tests yet"  # Replace with `npm test` if tests exist
 
       ###############################
       # Frontend (loyaltap-restaurant)
