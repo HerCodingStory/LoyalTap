@@ -49,12 +49,10 @@ const createLoyaltyClass = async ({ classId, restaurantName, programName, logoUr
   }
 };
 
-const createGooglePass = (customerEmail, points, goal, restaurantName) => {
+const createGooglePass = (customerEmail, points, goal, classId) => {
   if (typeof customerEmail !== 'string') {
     throw new Error('customerEmail must be a string');
   }
-  const uidSafe = restaurantName.replace(/[^a-zA-Z0-9]/g, '');
-  const classId = `${process.env.GOOGLE_WALLET_ISSUER_ID}.${uidSafe}_loyalty_class`;
   const customerId = customerEmail.replace(/[@.]/g, '_'); // safe ID
   const objectId = `${process.env.GOOGLE_WALLET_ISSUER_ID}.${customerId}`;
 

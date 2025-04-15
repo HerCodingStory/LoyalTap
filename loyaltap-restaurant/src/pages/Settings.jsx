@@ -12,7 +12,7 @@ export default function Settings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/pass/google/create-class', {
+            await api.post('api/pass/google/create-class', {
                 restaurantName,
                 programName,
                 logoUrl,
