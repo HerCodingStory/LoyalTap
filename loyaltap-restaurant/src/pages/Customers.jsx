@@ -49,6 +49,7 @@ export default function Customers() {
                     <th className="p-3 text-left">Email</th>
                     <th className="p-3 text-center">Points</th>
                     <th className="p-3 text-center">Goal</th>
+                    <th className="p-3 text-center">Date created</th>
                     <th className="p-3 text-center">Actions</th>
                 </tr>
                 </thead>
@@ -58,6 +59,7 @@ export default function Customers() {
                         <td className="p-3 text-left">{p.customerEmail}</td>
                         <td className="p-3">{p.points}</td>
                         <td className="p-3">{p.goal}</td>
+                        <td className="p-3">{p.createdAt}</td>
                         <td className="p-3">
                             <button
                                 onClick={() => handleDelete(p.customerEmail)}
