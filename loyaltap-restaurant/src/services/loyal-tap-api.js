@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
-const api = axios.create({
+// Create the Axios instance
+export const api = axios.create({
     baseURL: 'http://localhost:5001'
 });
 
+// Add an interceptor to include the Firebase token in requests
 api.interceptors.request.use(async (config) => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -16,10 +18,18 @@ api.interceptors.request.use(async (config) => {
     return config;
 });
 
-// export const login = (email, password) => api.post('/auth/login', { email, password });
-// export const register = (email, password, name) => api.post('/auth/register', { email, password, name });
-
+// Define API functions
 export const createPassWithQR = (customerEmail, points, goal) =>
     api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, points, goal });
 
-export default api;
+export const getAllCustomers = (headers) => {
+    return api.get('/api/pass/google/all', { headers });
+};
+
+// Default export for grouped API functions
+const loyalTapApi = {
+    createPassWithQR,
+    getAllCustomers,
+};
+
+export default loyalTapApi;

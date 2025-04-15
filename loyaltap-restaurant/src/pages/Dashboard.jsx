@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { Outlet } from 'react-router-dom';
-import loyalTapApi from '../services/loyal-tap-api';
+import { api } from '../services/loyal-tap-api'; // Import the named export
 
 export default function Dashboard() {
     const [restaurantName, setRestaurantName] = useState('');
@@ -12,7 +12,7 @@ export default function Dashboard() {
             try {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
-                const res = await loyalTapApi.get('/auth/me', { headers });
+                const res = await api.get('/auth/me', { headers });
                 setRestaurantName(res.data.user.name);
             } catch (err) {
                 console.error('Failed to load restaurant name');

@@ -146,6 +146,7 @@ exports.getAllPasses = async (req, res) => {
  * DELETE /api/pass/customer/reward
  * Delete customer reward card
  */
+
 // exports.deleteCustomerCard = async (req, res) => {
 //   const { customerEmail } = req.body;
 //   const firebaseUid = req.user.uid;

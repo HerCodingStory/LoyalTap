@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import loyalTapApi from '../services/loyal-tap-api'; // Use the default export
+
 
 export default function Customers() {
     const [passes, setPasses] = useState([]);
@@ -13,10 +15,10 @@ export default function Customers() {
         };
         const fetchPasses = async () => {
             try {
-                const res = await axios.get('http://localhost:5001/api/pass/google/all', { headers });
-                setPasses(res.data);
+                const allCustomers = await loyalTapApi.getAllCustomers(headers);
+                setPasses(allCustomers.data);
             } catch (err) {
-                console.error('Failed to load passes');
+                console.error('Failed to load passes', err);
             }
         };
         fetchPasses();
