@@ -9,7 +9,7 @@ exports.syncUserFromFirebase = async (req, res) => {
         firebaseUid: req.user.uid,
         email: req.user.email,
         role: "restaurant", // or req.body.role if dynamic
-        name: req.user.name || "New Restaurant", // Firebase only includes name if set during registration
+        name: req.body.name || "New Restaurant", // Firebase only includes name if set during registration
       });
     }
 

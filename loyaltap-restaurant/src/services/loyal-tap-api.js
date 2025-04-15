@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5001/api'
+    baseURL: 'http://localhost:5001'
 });
 
 api.interceptors.request.use(async (config) => {
@@ -20,6 +20,6 @@ api.interceptors.request.use(async (config) => {
 // export const register = (email, password, name) => api.post('/auth/register', { email, password, name });
 
 export const createPassWithQR = (customerEmail, points, goal) =>
-    api.post('/pass/google/generate-pass-with-qr', { customerEmail, points, goal });
+    api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, points, goal });
 
 export default api;
