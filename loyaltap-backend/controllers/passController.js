@@ -23,7 +23,7 @@ exports.createPassWithQR = async (req, res) => {
   const restaurantId = restaurantUser._id;
 
   try {
-    const passUrl = createGooglePass(customerEmail, points, goal);
+    const passUrl = createGooglePass(customerEmail, points, goal, restaurantUser.name);
     const qrCode = await generateQRCode(passUrl);
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });

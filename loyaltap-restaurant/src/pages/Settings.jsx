@@ -1,8 +1,79 @@
+import React, { useState } from 'react';
+import api from '../services/loyal-tap-api';
+
 export default function Settings() {
+    const [restaurantName, setRestaurantName] = useState('');
+    const [programName, setProgramName] = useState('');
+    const [logoUrl, setLogoUrl] = useState('');
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post('/pass/google/create-class', {
+                restaurantName,
+                programName,
+                logoUrl,
+            });
+            setSuccess(true);
+            setError('');
+        } catch (err) {
+            setSuccess(false);
+            setError('Failed to create loyalty class');
+        }
+    };
+
     return (
-        <div className="p-6">
-            <h2 className="text-2xl font-bold text-primary mb-4">Settings</h2>
-            <p className="text-gray-600">This is where the restaurant will provide Name, Program Name, and logo that will be displayed in the pass</p>
+        <div className="min-h-screen bg-gradient-to-br from-pink-100 to-emerald-100 p-8">
+            <div className="max-w-xl mx-auto bg-white p-8 rounded-3xl shadow-xl">
+                <h2 className="text-2xl font-bold text-emerald-700 mb-6">Program Settings</h2>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block mb-1 text-sm font-semibold">Restaurant Name</label>
+                        <input
+                            type="text"
+                            value={restaurantName}
+                            onChange={(e) => setRestaurantName(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block mb-1 text-sm font-semibold">Program Name</label>
+                        <input
+                            type="text"
+                            value={programName}
+                            onChange={(e) => setProgramName(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block mb-1 text-sm font-semibold">Program Logo URL</label>
+                        <input
+                            type="url"
+                            value={logoUrl}
+                            onChange={(e) => setLogoUrl(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl shadow-md transition"
+                    >
+                        Save and Create Google Wallet Class
+                    </button>
+
+                    {success && <p className="text-green-600 mt-3">✅ Loyalty class created successfully.</p>}
+                    {error && <p className="text-red-600 mt-3">❌ {error}</p>}
+                </form>
+            </div>
         </div>
     );
 }

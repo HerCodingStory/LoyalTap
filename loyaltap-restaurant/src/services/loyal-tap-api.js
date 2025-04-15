@@ -16,10 +16,14 @@ api.interceptors.request.use(async (config) => {
     return config;
 });
 
-// export const login = (email, password) => api.post('/auth/login', { email, password });
-// export const register = (email, password, name) => api.post('/auth/register', { email, password, name });
+const createPassWithQR = (customerEmail, points, goal) => {
+    return api.post('/api/pass/google/generate-pass-with-qr', {
+        customerEmail,
+        points,
+        goal,
+    });
+};
 
-export const createPassWithQR = (customerEmail, points, goal) =>
-    api.post('/pass/google/generate-pass-with-qr', { customerEmail, points, goal });
+export { createPassWithQR };
 
 export default api;
