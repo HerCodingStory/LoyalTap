@@ -3,6 +3,8 @@ import { createPassWithQR } from '../services/loyal-tap-api';
 
 export default function Generate() {
     const [email, setEmail] = useState('');
+    const [phone_number, setPhone_number] = useState('');
+    const [name, setName] = useState('');
     const [points, setPoints] = useState(0);
     const [goal, setGoal] = useState(10);
     const [qr, setQr] = useState(null);
@@ -13,7 +15,7 @@ export default function Generate() {
     const handleGenerate = async (e) => {
         e.preventDefault();
         try {
-            const res = await createPassWithQR(email, points, goal);
+            const res = await createPassWithQR(email,phone_number,name, points, goal);
             setQr(res.data.qrCode);
         } catch (err) {
             alert('Failed to generate pass');
@@ -31,6 +33,16 @@ export default function Generate() {
                 />
                 <input
                     className="w-full p-3 border border-gray-300 rounded-md"
+                    placeholder="Phone # format: '1234567890' "
+                    onChange={(e) => setPhone_number(e.target.value)}
+                />
+                <input
+                    className="w-full p-3 border border-gray-300 rounded-md"
+                    placeholder="Name"
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                    className="w-full p-3 border border-gray-300 rounded-md"
                     type="number"
                     placeholder="Current Points"
                     onChange={(e) => setPoints(Number(e.target.value))}
@@ -42,6 +54,7 @@ export default function Generate() {
                     value={goal}
                     onChange={(e) => setGoal(Number(e.target.value))}
                 />
+                
                 <button
                     type="submit"
                     className="w-full bg-primary text-white py-3 rounded-md hover:bg-blue-700 transition"

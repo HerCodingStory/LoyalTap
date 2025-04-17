@@ -8,7 +8,7 @@ const User = require('../models/User');
  * Creates a new Wallet pass, saves it, and returns pass + QR
  */
 exports.createPassWithQR = async (req, res) => {
-  const { customerEmail, points, goal } = req.body;
+  const { customerEmail, phone_number, name, points, goal } = req.body;
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -17,7 +17,7 @@ exports.createPassWithQR = async (req, res) => {
   }
 
   if (!customerEmail || points == null || goal == null) {
-    return res.status(400).json({ message: 'Missing customerEmail, points, or goal' });
+    return res.status(400).json({ message: 'Missing customerEmail, phone_number, name, points, or goal' });
   }
 
   const restaurantId = restaurantUser._id;
@@ -28,8 +28,11 @@ exports.createPassWithQR = async (req, res) => {
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
     if (!card) {
-      card = await RewardCard.create({ restaurantId, customerEmail, points, goal });
+      card = await RewardCard.create({ restaurantId, customerEmail, phone_number, name, points, goal });
+      await card.save();
     } else {
+      card.customerPhone = phone_number,
+      card.customerName = name,
       card.points = points;
       card.goal = goal;
       card.lastUpdated = Date.now();
