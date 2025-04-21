@@ -12,6 +12,7 @@ exports.createLoyaltyClass = async (req, res) => {
   const { restaurantName, programName, logoUrl } = req.body;
 
   const restaurantUser = await User.findOne({ firebaseUid });
+
   if (!restaurantUser) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
@@ -46,7 +47,7 @@ exports.createLoyaltyClass = async (req, res) => {
  * Creates a new Wallet pass, saves it, and returns pass + QR
  */
 exports.createPassWithQR = async (req, res) => {
-  const { customerEmail, phone_number, name, points, goal } = req.body;
+  const { customerEmail, customerPhone, customerName, points, goal } = req.body;
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -70,11 +71,11 @@ exports.createPassWithQR = async (req, res) => {
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
     if (!card) {
-      card = await RewardCard.create({ restaurantId, customerEmail, phone_number, name, points, goal });
+      card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();
     } else {
-      card.customerPhone = phone_number;
-      card.customerName = name;
+      card.customerPhone = customerPhone;
+      card.customerName = customerName;
       card.points = points;
       card.goal = goal;
       card.lastUpdated = Date.now();
@@ -102,7 +103,7 @@ exports.createPassWithQR = async (req, res) => {
  * Creates a new Wallet pass, saves it, and returns pass link
  */
 exports.createPassLink = async (req, res) => {
-  const { customerEmail, phone_number, name, points, goal } = req.body;
+  const { customerEmail, customerPhone, customerName, points, goal } = req.body;
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -123,14 +124,13 @@ exports.createPassLink = async (req, res) => {
   try {
     const passUrl = createGooglePass(customerEmail, points, goal, restaurantUser.loyaltyClassId);
 
-
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
     if (!card) {
-      card = await RewardCard.create({ restaurantId, customerEmail, phone_number, name, points, goal });
+      card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();
     } else {
-      card.customerPhone = phone_number;
-      card.customerName = name;
+      card.customerPhone = customerPhone;
+      card.customerName = customerName;
       card.points = points;
       card.goal = goal;
       card.lastUpdated = Date.now();
@@ -157,7 +157,7 @@ exports.createPassLink = async (req, res) => {
  * GET /api/pass/google/all
  * Lists all passes created by the logged-in restaurant
  */
-exports.getAllPasses = async (req, res) => {
+exports.getAllRewardCards = async (req, res) => {
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -166,11 +166,11 @@ exports.getAllPasses = async (req, res) => {
   }
 
   try {
-    const passes = await CustomerPass.find({ restaurantId: restaurantUser._id }).sort({ createdAt: -1 });
-    res.json(passes);
+    const customers = await RewardCard.find({ restaurantId: restaurantUser._id }).sort({ createdAt: -1 });
+    res.json(customers);
   } catch (err) {
-    console.error('Error fetching passes:', err);
-    res.status(500).json({ message: 'Failed to fetch passes.' });
+    console.error('Error fetching customers:', err);
+    res.status(500).json({ message: 'Failed to fetch customers.' });
   }
 };
 

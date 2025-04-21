@@ -19,17 +19,21 @@ api.interceptors.request.use(async (config) => {
 });
 
 // Define API functions
-export const createPassWithQR = (customerEmail, phone_number, name, points, goal) => {
-    return api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, phone_number, name, points, goal });
+export const createPassWithQR = (customerEmail, customerPhone, customerName, points, goal) => {
+    return api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, customerPhone, customerName, points, goal });
 }
 export const getAllCustomers = (headers) => {
     return api.get('/api/pass/google/all', { headers });
+};
+export const createLoyaltyClass = (restaurantName,programName,logoUrl) => {
+    return api.post('/api/pass/google/create-class', { restaurantName, programName, logoUrl });
 };
 
 // Default export for grouped API functions
 const loyalTapApi = {
     createPassWithQR,
     getAllCustomers,
+    createLoyaltyClass
 };
 
 export default loyalTapApi;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../services/loyal-tap-api';
+import { createLoyaltyClass } from '../services/loyal-tap-api';
 import PassPreview from '../components/PassPreview';
 
 export default function Settings() {
@@ -12,11 +12,7 @@ export default function Settings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('api/pass/google/create-class', {
-                restaurantName,
-                programName,
-                logoUrl,
-            });
+            const res = await createLoyaltyClass(restaurantName,programName,logoUrl);
             setSuccess(true);
             setError('');
         } catch (err) {

@@ -80,9 +80,9 @@ export default function Customers() {
                         <td className="p-3 text-left">{p.customerPhone}</td>
                         <td className="p-3">{p.points}</td>
                         <td className="p-3">{p.goal}</td>
-                        <td className="p-3">{p.createdAt}</td>
+                        <td className="p-3">{new Date(p.lastUpdated).toLocaleDateString()}</td>
                         <td className="p-3">
-                            <button
+                        <button
                                 onClick={() => handleDelete(p.customerEmail)}
                                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                             >
