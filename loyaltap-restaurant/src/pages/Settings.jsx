@@ -12,7 +12,7 @@ export default function Settings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await createLoyaltyClass(restaurantName,programName,logoUrl);
+            await createLoyaltyClass(restaurantName,programName,logoUrl);
             setSuccess(true);
             setError('');
         } catch (err) {
