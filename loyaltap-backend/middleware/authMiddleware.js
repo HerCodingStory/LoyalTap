@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const admin = require("../firebase"); // path to your firebase.js
 
 const verifyToken = async (req, res, next) => {
