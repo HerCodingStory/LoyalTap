@@ -63,7 +63,9 @@ export default function Customers() {
             <table className="w-full table-auto text-sm bg-white rounded-xl shadow">
                 <thead className="bg-gray-100 text-gray-600">
                 <tr>
+                    <th className="p-3 text-left">Name</th>
                     <th className="p-3 text-left">Email</th>
+                    <th className="p-3 text-left">Phone</th>
                     <th className="p-3 text-center">Points</th>
                     <th className="p-3 text-center">Goal</th>
                     <th className="p-3 text-center">Date created</th>
@@ -73,7 +75,9 @@ export default function Customers() {
                 <tbody>
                 {filteredPasses.map((p, index) => (
                     <tr key={index} className="border-t text-center">
+                        <td className="p-3 text-left">{p.customerName}</td>
                         <td className="p-3 text-left">{p.customerEmail}</td>
+                        <td className="p-3 text-left">{p.customerPhone}</td>
                         <td className="p-3">{p.points}</td>
                         <td className="p-3">{p.goal}</td>
                         <td className="p-3">{p.createdAt}</td>

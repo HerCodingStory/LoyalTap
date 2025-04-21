@@ -28,6 +28,11 @@ export default function Generate() {
                 <h2 className="text-2xl font-bold text-primary">Create Loyalty Pass</h2>
                 <input
                     className="w-full p-3 border border-gray-300 rounded-md"
+                    placeholder="Name"
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                    className="w-full p-3 border border-gray-300 rounded-md"
                     placeholder="Customer Email"
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -35,11 +40,6 @@ export default function Generate() {
                     className="w-full p-3 border border-gray-300 rounded-md"
                     placeholder="Phone # format: '1234567890' "
                     onChange={(e) => setPhone_number(e.target.value)}
-                />
-                <input
-                    className="w-full p-3 border border-gray-300 rounded-md"
-                    placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
                 />
                 <input
                     className="w-full p-3 border border-gray-300 rounded-md"
@@ -54,7 +54,7 @@ export default function Generate() {
                     value={goal}
                     onChange={(e) => setGoal(Number(e.target.value))}
                 />
-                
+
                 <button
                     type="submit"
                     className="w-full bg-primary text-white py-3 rounded-md hover:bg-blue-700 transition"
