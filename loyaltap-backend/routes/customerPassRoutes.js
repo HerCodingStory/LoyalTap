@@ -1,19 +1,16 @@
 const express = require('express');
 const { createGooglePass, createLoyaltyClass } = require('../utils/googleWalletUtils');
-const { createPassWithQR, getAllPasses, regenerateCustomerPass, deleteCustomerCard, deleteCustomerPasses } = require('../controllers/passController');
+const { createPassWithQR, deleteCustomerPass, getCustomerPassLink } = require('../controllers/customerPassController');
 const verifyFirebaseToken = require('../middleware/firebaseAuth');
 const router = express.Router();
 
-
-router.post('/google/generate-pass-with-qr', verifyFirebaseToken, createPassWithQR);
-router.get('/google/all', verifyFirebaseToken, getAllPasses);
-// router.delete('/customer/pass', verifyFirebaseToken, deleteCustomerPasses);
-// router.post('/google/regenerate-pass', verifyFirebaseToken, regenerateCustomerPass);
-// router.delete('/customer/reward', verifyFirebaseToken, deleteCustomerCard);
-
-// Testing Only (One Time for Each Restaurant)
+// TODO: This should only be allow one time per restaurant
 router.get('/google/create-class', createLoyaltyClass);
-router.post('/google/generate-pass', verifyFirebaseToken, async (req, res) => {
+
+router.delete('/customer-pass/delete-pass', verifyFirebaseToken, deleteCustomerPass);
+router.post('/customer-pass/pass-link', verifyFirebaseToken, getCustomerPassLink);
+router.post('/google/generate-pass-with-qr', verifyFirebaseToken, createPassWithQR);
+router.post('/google/generate-pass-link', verifyFirebaseToken, async (req, res) => {
     const { customerEmail, points, goal } = req.body;
 
     if (typeof customerEmail !== 'string') {
@@ -29,7 +26,6 @@ router.post('/google/generate-pass', verifyFirebaseToken, async (req, res) => {
         res.status(500).json({ message: 'Failed to generate pass' });
     }
 });
-
 
 module.exports = router;
 
