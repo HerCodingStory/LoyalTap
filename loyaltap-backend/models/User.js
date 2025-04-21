@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  loyaltyClassId: {
+    type: String,
+    default: null
   }
 });
 

@@ -13,7 +13,7 @@ export default function Dashboard() {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
                 const res = await loyalTapApi.get('/auth/me', { headers });
-                setRestaurantName(res.data.name);
+                setRestaurantName(res.data.user.name);
             } catch (err) {
                 console.error('Failed to load restaurant name');
             }
