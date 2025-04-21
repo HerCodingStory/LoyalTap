@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
-const api = axios.create({
+// Create the Axios instance
+export const api = axios.create({
     baseURL: 'http://localhost:5001'
 });
 
+// Add an interceptor to include the Firebase token in requests
 api.interceptors.request.use(async (config) => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -16,14 +18,22 @@ api.interceptors.request.use(async (config) => {
     return config;
 });
 
-const createPassWithQR = (customerEmail, points, goal) => {
-    return api.post('/api/pass/google/generate-pass-with-qr', {
-        customerEmail,
-        points,
-        goal,
-    });
+// Define API functions
+export const createPassWithQR = (customerEmail, customerPhone, customerName, points, goal) => {
+    return api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, customerPhone, customerName, points, goal });
+}
+export const getAllCustomers = (headers) => {
+    return api.get('/api/pass/google/all', { headers });
+};
+export const createLoyaltyClass = (restaurantName,programName,logoUrl) => {
+    return api.post('/api/pass/google/create-class', { restaurantName, programName, logoUrl });
 };
 
-export { createPassWithQR };
+// Default export for grouped API functions
+const loyalTapApi = {
+    createPassWithQR,
+    getAllCustomers,
+    createLoyaltyClass
+};
 
-export default api;
+export default loyalTapApi;
