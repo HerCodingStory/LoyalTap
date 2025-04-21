@@ -1,14 +1,9 @@
 const { google } = require('googleapis');
-const path = require('path');
 const credentials = require('../GoogleWallet/credentials/google-service-account.json');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const QRCode = require('qrcode');
 
-const ISSUER_ID = '3388000000022905745'; // from Wallet Console
-const CLASS_ID = `${ISSUER_ID}.loyalty_class`;
-
-const createLoyaltyClass = async () => {
+const createLoyaltyClass = async ({ classId, restaurantName, programName, logoUrl }) => {
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'],
@@ -20,23 +15,23 @@ const createLoyaltyClass = async () => {
   try {
     const res = await wallet.loyaltyclass.insert({
       requestBody: {
-        id: CLASS_ID,
-        issuerName: 'Loyaltap',
-        programName: 'Loyalty Rewards',
+        id: classId,
+        issuerName: restaurantName,
+        programName: programName,
         reviewStatus: 'underReview',
         rewardsTierLabel: 'Reward Level',
         rewardsTier: 'Gold',
         programLogo: {
           sourceUri: {
-            uri: 'https://i.postimg.cc/KvpcFk31/Astra-Web-Miami-2.png',
-            description: 'AstraWeb Miami'
-          }
+            uri: logoUrl,
+            description: restaurantName,
+          },
         },
         messages: [{
           header: 'Welcome!',
-          body: 'Thanks for joining our rewards program 🎉'
-        }]
-      }
+          body: 'Thanks for joining our rewards program 🎉',
+        }],
+      },
     });
 
     console.log('Loyalty class created:', res.data);
@@ -44,18 +39,20 @@ const createLoyaltyClass = async () => {
   } catch (err) {
     if (err.errors?.[0]?.reason === 'duplicate') {
       console.log('Loyalty class already exists.');
+      return { message: 'Class already exists' };
     } else {
       console.error('Error creating loyalty class:', err);
+      throw err;
     }
   }
 };
 
-const createGooglePass = (customerEmail, points, goal) => {
+const createGooglePass = (customerEmail, points, goal, classId) => {
   if (typeof customerEmail !== 'string') {
     throw new Error('customerEmail must be a string');
   }
   const customerId = customerEmail.replace(/[@.]/g, '_'); // safe ID
-  const objectId = `${ISSUER_ID}.${customerId}`;
+  const objectId = `${process.env.GOOGLE_WALLET_ISSUER_ID}.${customerId}`;
 
   const payload = {
     iss: credentials.client_email,
@@ -66,7 +63,7 @@ const createGooglePass = (customerEmail, points, goal) => {
       loyaltyObjects: [
         {
           id: objectId,
-          classId: CLASS_ID,
+          classId: classId,
           state: 'active',
           accountId: customerEmail,
           accountName: customerEmail,
