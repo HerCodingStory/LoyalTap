@@ -13,6 +13,7 @@ export default function Customers() {
         };
         const fetchPasses = async () => {
             try {
+                // TODO: add server to environment
                 const res = await axios.get('http://localhost:5001/api/pass/google/all', { headers });
                 setPasses(res.data);
             } catch (err) {
@@ -24,10 +25,12 @@ export default function Customers() {
 
     const handleDelete = async (email) => {
         try {
+            // TODO: add server to environment
             await axios.delete('http://localhost:5001/api/pass/customer/pass', {
                 headers,
                 data: { customerEmail: email }
             });
+            // TODO: add server to environment
             await axios.delete('http://localhost:5001/api/pass/customer/reward', {
                 headers,
                 data: { customerEmail: email }

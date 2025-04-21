@@ -1,8 +1,6 @@
 const { google } = require('googleapis');
-const path = require('path');
 const credentials = require('../GoogleWallet/credentials/google-service-account.json');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const QRCode = require('qrcode');
 
 const ISSUER_ID = '3388000000022905745'; // from Wallet Console
