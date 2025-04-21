@@ -24,7 +24,7 @@ const customerPassSchema = new mongoose.Schema({
   },
   qrCode: {
     type: String, // base64 PNG
-    required: true
+    required: false
   },
   createdAt: {
     type: Date,

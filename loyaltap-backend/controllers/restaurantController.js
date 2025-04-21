@@ -1,11 +1,11 @@
 const RewardCard = require('../models/RewardCard');
 const User = require("../models/User");
+const CustomerPass = require("../models/CustomerPass");
 
 /**
- * GET /api/restaurant/reward-cards
+ * GET /api/restaurant/reward-card/all
  * Get all customers info
  */
-// TODO: test in postman
 exports.getAllCustomersRewardCards = async (req, res) => {
     const firebaseUid = req.user.uid;
     const restaurantUser = await User.findOne({ firebaseUid });
@@ -15,7 +15,7 @@ exports.getAllCustomersRewardCards = async (req, res) => {
     }
 
     try {
-        const customers = await RewardCard.find({ restaurantId: req.user.id }).sort({ createdAt: -1 });
+        const customers = await RewardCard.find({ restaurantId: restaurantUser._id }).sort({ createdAt: -1 });
         res.json(customers);
     } catch (err) {
         console.error('Error fetching customers:', err);
@@ -24,12 +24,11 @@ exports.getAllCustomersRewardCards = async (req, res) => {
 };
 
 /**
- * GET /api/restaurant/reward-cards/:email
+ * POST /api/restaurant/reward-card/one
  * Get one customer info
  */
-// TODO: test in postman
 exports.getCustomerRewardCard = async (req, res) => {
-    const { customerEmail } = req.params;
+    const { customerEmail } = req.body;
     const firebaseUid = req.user.uid;
     const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -37,8 +36,11 @@ exports.getCustomerRewardCard = async (req, res) => {
         return res.status(401).json({ message: 'Restaurant user not found' });
     }
 
+    const restaurantId = restaurantUser._id
+
     try {
-        const card = await RewardCard.findOne({restaurantId: req.user.id, customerEmail: customerEmail});
+        const card = await RewardCard.findOne({restaurantId, customerEmail});
+
         if (!card)
             return res.status(404).json({message: 'No reward card found'});
         else {
@@ -51,10 +53,9 @@ exports.getCustomerRewardCard = async (req, res) => {
 };
 
 /**
- * POST /api/restaurant/reward-cards/update-points
+ * POST /api/restaurant/reward-card/update-points
  * Update customer points
  */
-// TODO: test in postman
 exports.updateCustomerPoints = async (req, res) => {
     const { customerEmail, newPoints } = req.body;
     const firebaseUid = req.user.uid;
@@ -64,8 +65,13 @@ exports.updateCustomerPoints = async (req, res) => {
         return res.status(401).json({ message: 'Restaurant user not found' });
     }
 
+    const restaurantId = restaurantUser._id
+
     try {
-        const card = await RewardCard.findOne({restaurantId: req.user.id, customerEmail: customerEmail});
+        const card = await RewardCard.findOne({restaurantId, customerEmail});
+        // TODO: do we have to update pass too??
+        //const pass = await CustomerPass.findOne({ restaurantId, customerEmail });
+
         if (!card) {
             return res.status(404).json({message: 'No reward card found'});
         } else {
@@ -82,10 +88,10 @@ exports.updateCustomerPoints = async (req, res) => {
 };
 
 /**
- * POST /api/restaurant/reward-cards/update-info
+ * POST /api/restaurant/reward-card/update-info
  * Update customer info
  */
-// TODO: test in postman
+// TODO: Doesnt work because old bug not saving correct values in db I think
 exports.updateCustomerInfo = async (req, res) => {
     const { customerName, customerEmail, customerPhone } = req.body;
     const firebaseUid = req.user.uid;
@@ -95,13 +101,15 @@ exports.updateCustomerInfo = async (req, res) => {
         return res.status(401).json({ message: 'Restaurant user not found' });
     }
 
+    const restaurantId = restaurantUser._id;
+
     try {
-        const card = await RewardCard.findOne({restaurantId: req.user.id, customerEmail: customerEmail});
+        const card = await RewardCard.findOne({restaurantId, customerEmail});
+
         if (!card) {
             return res.status(404).json({message: 'No reward card found'});
         } else {
             card.customerName = customerName;
-            card.customerEmail = customerEmail;
             card.customerPhone = customerPhone;
             // TODO: maybe this should be createdOn
             //card.lastUpdated = Date.now();
@@ -115,10 +123,9 @@ exports.updateCustomerInfo = async (req, res) => {
 };
 
 /**
- * DELETE /api/restaurant/reward-cards/delete-card
+ * DELETE /api/restaurant/reward-card/delete-card
  * Delete customer reward card
  */
-// TODO: test in postman
 exports.deleteCustomerCard = async (req, res) => {
     const { customerEmail } = req.body;
     const firebaseUid = req.user.uid;
@@ -131,8 +138,15 @@ exports.deleteCustomerCard = async (req, res) => {
     const restaurantId = restaurantUser._id;
 
     try {
-        await RewardCard.deleteOne({ restaurantId, customerEmail });
+        // TODO: improve deletion time and efficiency
+        const card = await RewardCard.deleteOne({ restaurantId, customerEmail });
+
+        if (!card)
+            return res.status(200).json({ message: 'Customer card doesnt exist' });
+
+        await CustomerPass.deleteOne({ restaurantId, customerEmail });
         res.json({ message: 'Reward card deleted successfully' });
+
     } catch (err) {
         console.error('Error deleting reward card:', err);
         res.status(500).json({ message: 'Failed to delete reward card.' });

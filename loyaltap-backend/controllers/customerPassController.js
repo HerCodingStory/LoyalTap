@@ -1,4 +1,4 @@
-const { createGooglePass, generateQRCode } = require('../utils/googleWalletUtils');
+const { createGooglePass, generateQRCode, createLoyaltyClass } = require('../utils/googleWalletUtils');
 const CustomerPass = require('../models/CustomerPass');
 const RewardCard = require('../models/RewardCard');
 const User = require('../models/User');
@@ -19,6 +19,9 @@ exports.createLoyaltyClass = async (req, res) => {
 
   const uidSafe = firebaseUid.replace(/[^a-zA-Z0-9]/g, '');
   const classId = `${process.env.GOOGLE_WALLET_ISSUER_ID}.${uidSafe}_loyalty`;
+
+  if (restaurantUser.loyaltyClassId)
+    return res.status(409).json({ message: 'Loyalty class already exists' });
 
   try {
     const result = await createLoyaltyClass({
@@ -70,6 +73,7 @@ exports.createPassWithQR = async (req, res) => {
     const qrCode = await generateQRCode(passUrl);
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
+
     if (!card) {
       card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();
@@ -157,7 +161,6 @@ exports.createPassLink = async (req, res) => {
  * GET /api/pass/customer-pass/all
  * Lists all passes created by the logged-in restaurant
  */
-// TODO: test in postman
 exports.getAllCustomerPasses = async (req, res) => {
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
@@ -176,12 +179,11 @@ exports.getAllCustomerPasses = async (req, res) => {
 };
 
 /**
- * GET /api/pass/google/customer-pass/:email
- * Lists all passes created by the logged-in restaurant
+ * POST /api/restaurant/customer-pass/one
+ * Get one customer pass
  */
-// TODO: test in postman
 exports.getCustomerPass = async (req, res) => {
-  const { email } = req.params;
+  const { customerEmail } = req.body;
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -189,8 +191,10 @@ exports.getCustomerPass = async (req, res) => {
     return res.status(401).json({ message: 'Restaurant user not found' });
   }
 
+  const restaurantId = restaurantUser._id;
+
   try {
-    const pass = await CustomerPass.findOne({ restaurantId: req.user.id, customerEmail: email });
+    const pass = await CustomerPass.findOne({ restaurantId, customerEmail });
 
     if (!pass)
       return res.status(404).json({message: 'No pass found'});
@@ -204,10 +208,9 @@ exports.getCustomerPass = async (req, res) => {
 };
 
 /**
- * DELETE /api/pass/customer-pass/delete-pass
+ * DELETE /api/restaurant/customer-pass/delete-pass
  * Delete customer pass generated
  */
-// TODO: test in postman
 exports.deleteCustomerPass = async (req, res) => {
   const { customerEmail } = req.body;
   const firebaseUid = req.user.uid;
@@ -220,8 +223,15 @@ exports.deleteCustomerPass = async (req, res) => {
   const restaurantId = restaurantUser._id;
 
   try {
+    // TODO: improve deletion time and efficiency
+    const customer = await CustomerPass.findOne({ restaurantId, customerEmail });
+
+    if (!customer)
+      return res.status(200).json({ message: 'Customer pass doesnt exist' });
+
     await CustomerPass.deleteOne({ restaurantId, customerEmail });
     res.json({ message: 'Customer pass deleted successfully' });
+
   } catch (err) {
     console.error('Error deleting pass:', err);
     res.status(500).json({ message: 'Failed to delete pass.' });
@@ -229,10 +239,9 @@ exports.deleteCustomerPass = async (req, res) => {
 };
 
 /**
- * POST /api/pass/customer-pass/pass-link
+ * POST /api/restaurant/customer-pass/pass-link
  * Get previous customer pass link
  */
-// TODO: test in postman
 exports.getCustomerPassLink = async (req, res) => {
   const { customerEmail } = req.body;
   const firebaseUid = req.user.uid;

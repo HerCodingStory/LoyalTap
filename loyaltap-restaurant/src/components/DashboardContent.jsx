@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import loyalTapApi, { createPassWithQR } from '../services/loyal-tap-api';
+import { createPassWithQR } from '../services/loyal-tap-api';
 import axios from 'axios';
 
 export default function DashboardContent() {
@@ -14,7 +14,8 @@ export default function DashboardContent() {
 
     const fetchPasses = async () => {
         try {
-            const res = await axios.get('http://localhost:5001/api/pass/google/all', { headers });
+            // TODO: add server into environment file
+            const res = await axios.get('http://localhost:5001/restaurant/reward-card/all', { headers });
             setPasses(res.data);
         } catch (err) {
             console.error('Failed to load passes');
@@ -38,11 +39,13 @@ export default function DashboardContent() {
 
     const handleDelete = async (email) => {
         try {
-            await axios.delete('http://localhost:5001/api/pass/customer/pass', {
+            // TODO: add server into environment file
+            await axios.delete('http://localhost:5001/api/pass/customer-pass/delete-pass', {
                 headers,
                 data: { customerEmail: email }
             });
-            await axios.delete('http://localhost:5001/api/pass/customer/reward', {
+            // TODO: add server into environment file
+            await axios.delete('http://localhost:5001/api/restaurant/reward-card/delete-card', {
                 headers,
                 data: { customerEmail: email }
             });

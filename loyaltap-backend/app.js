@@ -3,7 +3,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const passRoutes = require('./routes/customerPassRoutes');
-const rewardCardRoutes = require('./routes/rewardCardRoutes');
+const rewardCardRoutes = require('./routes/restaurantRoutes');
 
 const app = express();
 
