@@ -21,7 +21,8 @@ export default function Register() {
     
             const idToken = await user.getIdToken();
             console.log("🪪 Got ID Token", idToken);
-    
+
+            // TODO: add server into environment file
             const res = await axios.post(
                 'http://localhost:5001/auth/sync',
                 { name },

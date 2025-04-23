@@ -20,6 +20,9 @@ exports.createLoyaltyClass = async (req, res) => {
   const uidSafe = firebaseUid.replace(/[^a-zA-Z0-9]/g, '');
   const classId = `${process.env.GOOGLE_WALLET_ISSUER_ID}.${uidSafe}_loyalty`;
 
+  if (restaurantUser.loyaltyClassId)
+    return res.status(409).json({ message: 'Loyalty class already exists' });
+
   try {
     const result = await createLoyaltyClass({
       classId,
@@ -70,6 +73,7 @@ exports.createPassWithQR = async (req, res) => {
     const qrCode = await generateQRCode(passUrl);
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
+
     if (!card) {
       card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();
@@ -125,6 +129,7 @@ exports.createPassLink = async (req, res) => {
     const passUrl = createGooglePass(customerEmail, points, goal, restaurantUser.loyaltyClassId);
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
+
     if (!card) {
       card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();
@@ -154,10 +159,10 @@ exports.createPassLink = async (req, res) => {
 };
 
 /**
- * GET /api/pass/google/all
+ * GET /api/pass/customer-pass/all
  * Lists all passes created by the logged-in restaurant
  */
-exports.getAllRewardCards = async (req, res) => {
+exports.getAllCustomerPasses = async (req, res) => {
   const firebaseUid = req.user.uid;
   const restaurantUser = await User.findOne({ firebaseUid });
 
@@ -166,103 +171,106 @@ exports.getAllRewardCards = async (req, res) => {
   }
 
   try {
-    const customers = await RewardCard.find({ restaurantId: restaurantUser._id }).sort({ createdAt: -1 });
-    res.json(customers);
+    const passes = await CustomerPass.find({ restaurantId: restaurantUser._id }).sort({ createdAt: -1 });
+    res.json(passes);
   } catch (err) {
-    console.error('Error fetching customers:', err);
-    res.status(500).json({ message: 'Failed to fetch customers.' });
+    console.error('Error fetching passes:', err);
+    res.status(500).json({ message: 'Failed to fetch passes.' });
   }
 };
 
 /**
- * POST /api/pass/google/regenerate-pass
- * Renegerate customer pass
+ * POST /api/restaurant/customer-pass/one
+ * Get one customer pass
  */
-// exports.regenerateCustomerPass = async (req, res) => {
-//   const { customerEmail } = req.body;
-//   const firebaseUid = req.user.uid;
-//   const restaurantUser = await User.findOne({ firebaseUid });
-//
-//   if (!restaurantUser) {
-//     return res.status(401).json({ message: 'Restaurant user not found' });
-//   }
-//
-//   const restaurantId = restaurantUser._id;
-//
-//   if (!customerEmail) {
-//     return res.status(400).json({ message: 'Missing customerEmail' });
-//   }
-//
-//   try {
-//     const card = await RewardCard.findOne({ restaurantId, customerEmail });
-//
-//     if (!card) {
-//       return res.status(404).json({ message: 'No reward card found for this customer.' });
-//     }
-//
-//     const passUrl = createGooglePass(customerEmail, card.points, card.goal);
-//     const qrCode = await generateQRCode(passUrl);
-//
-//     const newPass = await CustomerPass.create({
-//       restaurantId,
-//       customerEmail,
-//       points: card.points,
-//       goal: card.goal,
-//       passUrl,
-//       qrCode
-//     });
-//
-//     res.json({ passUrl, qrCode });
-//   } catch (err) {
-//     console.error('Error regenerating pass:', err);
-//     res.status(500).json({ message: 'Failed to regenerate pass.' });
-//   }
-// };
+exports.getCustomerPass = async (req, res) => {
+  const { customerEmail } = req.body;
+  const firebaseUid = req.user.uid;
+  const restaurantUser = await User.findOne({ firebaseUid });
+
+  if (!restaurantUser) {
+    return res.status(401).json({ message: 'Restaurant user not found' });
+  }
+
+  const restaurantId = restaurantUser._id;
+
+  try {
+    const pass = await CustomerPass.findOne({ restaurantId, customerEmail });
+
+    if (!pass)
+      return res.status(404).json({message: 'No pass found'});
+    else {
+      res.json(pass);
+    }
+  } catch (err) {
+    console.error('Error fetching customer:', err);
+    res.status(500).json({ message: 'Failed to fetch customer.' });
+  }
+};
 
 /**
- * DELETE /api/pass/customer/pass
+ * DELETE /api/restaurant/customer-pass/delete-pass
  * Delete customer pass generated
  */
-// exports.deleteCustomerPasses = async (req, res) => {
-//   const { customerEmail } = req.body;
-//   const firebaseUid = req.user.uid;
-//   const restaurantUser = await User.findOne({ firebaseUid });
-//
-//   if (!restaurantUser) {
-//     return res.status(401).json({ message: 'Restaurant user not found' });
-//   }
-//
-//   const restaurantId = restaurantUser._id;
-//
-//   try {
-//     await CustomerPass.deleteMany({ restaurantId, customerEmail });
-//     res.json({ message: 'Customer passes deleted successfully' });
-//   } catch (err) {
-//     console.error('Error deleting passes:', err);
-//     res.status(500).json({ message: 'Failed to delete passes.' });
-//   }
-// };
+exports.deleteCustomerPass = async (req, res) => {
+  const { customerEmail } = req.body;
+  const firebaseUid = req.user.uid;
+  const restaurantUser = await User.findOne({ firebaseUid });
+
+  if (!restaurantUser) {
+    return res.status(401).json({ message: 'Restaurant user not found' });
+  }
+
+  const restaurantId = restaurantUser._id;
+
+  try {
+    // TODO: improve deletion time and efficiency
+    const customer = await CustomerPass.findOne({ restaurantId, customerEmail });
+
+    if (!customer)
+      return res.status(200).json({ message: 'Customer pass doesnt exist' });
+
+    await CustomerPass.deleteOne({ restaurantId, customerEmail });
+    res.json({ message: 'Customer pass deleted successfully' });
+
+  } catch (err) {
+    console.error('Error deleting pass:', err);
+    res.status(500).json({ message: 'Failed to delete pass.' });
+  }
+};
 
 /**
- * DELETE /api/pass/customer/reward
- * Delete customer reward card
+ * POST /api/restaurant/customer-pass/pass-link
+ * Get previous customer pass link
  */
-// exports.deleteCustomerCard = async (req, res) => {
-//   const { customerEmail } = req.body;
-//   const firebaseUid = req.user.uid;
-//   const restaurantUser = await User.findOne({ firebaseUid });
-//
-//   if (!restaurantUser) {
-//     return res.status(401).json({ message: 'Restaurant user not found' });
-//   }
-//
-//   const restaurantId = restaurantUser._id;
-//
-//   try {
-//     await RewardCard.deleteOne({ restaurantId, customerEmail });
-//     res.json({ message: 'Reward card deleted successfully' });
-//   } catch (err) {
-//     console.error('Error deleting reward card:', err);
-//     res.status(500).json({ message: 'Failed to delete reward card.' });
-//   }
-// };
+exports.getCustomerPassLink = async (req, res) => {
+  const { customerEmail } = req.body;
+  const firebaseUid = req.user.uid;
+  const restaurantUser = await User.findOne({ firebaseUid });
+
+  if (!restaurantUser) {
+    return res.status(401).json({ message: 'Restaurant user not found' });
+  }
+
+  const restaurantId = restaurantUser._id;
+
+  if (!customerEmail) {
+    return res.status(400).json({ message: 'Missing customerEmail' });
+  }
+
+  try {
+    const pass = await CustomerPass.findOne({ restaurantId, customerEmail });
+
+    if (!pass) {
+      return res.status(404).json({ message: 'No reward card found for this customer.' });
+    }
+
+    const passUrl = pass.passUrl;
+    const qrCode = pass.qrCode;
+
+    res.json({ passUrl, qrCode });
+  } catch (err) {
+    console.error('Error getting the pass:', err);
+    res.status(500).json({ message: 'Failed to get pass.' });
+  }
+};

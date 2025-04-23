@@ -23,7 +23,7 @@ export const createPassWithQR = (customerEmail, customerPhone, customerName, poi
     return api.post('/api/pass/google/generate-pass-with-qr', { customerEmail, customerPhone, customerName, points, goal });
 }
 export const getAllCustomers = (headers) => {
-    return api.get('/api/pass/google/all', { headers });
+    return api.get('/api/restaurant/reward-card/all', { headers });
 };
 export const createLoyaltyClass = (restaurantName,programName,logoUrl) => {
     return api.post('/api/pass/google/create-class', { restaurantName, programName, logoUrl });
