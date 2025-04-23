@@ -129,6 +129,7 @@ exports.createPassLink = async (req, res) => {
     const passUrl = createGooglePass(customerEmail, points, goal, restaurantUser.loyaltyClassId);
 
     let card = await RewardCard.findOne({ restaurantId, customerEmail });
+
     if (!card) {
       card = await RewardCard.create({ restaurantId, customerEmail, customerPhone, customerName, points, goal });
       await card.save();

@@ -6,6 +6,12 @@ const rewardCardSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    customerName: {
+        type: String
+    },
+    customerPhone: {
+        type: String
+    },
     customerEmail: {
         type: String,
         required: true
