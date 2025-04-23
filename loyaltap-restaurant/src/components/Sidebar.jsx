@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaQrcode, FaUsers, FaCog, FaHome, FaBars, FaTimes } from 'react-icons/fa';
+import { FaQrcode, FaUsers, FaCog, FaHome } from 'react-icons/fa';
 import { LuScanBarcode } from "react-icons/lu";
 
 export default function Sidebar({ isMobile = false, onNavigate = () => {} }) {
