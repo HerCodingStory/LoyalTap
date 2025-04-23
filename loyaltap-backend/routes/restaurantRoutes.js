@@ -1,4 +1,3 @@
-//TODO: havent tested
 const express = require('express');
 const verifyFirebaseToken = require("../middleware/firebaseAuth");
 const { getAllCustomersRewardCards,
